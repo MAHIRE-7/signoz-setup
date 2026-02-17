@@ -1,0 +1,132 @@
+global:
+  cloud: aws
+  clusterName: keyklock
+  deploymentEnvironment: Production
+otelCollectorEndpoint: 172.31.6.192:4317 # SigNoz private ip
+otelInsecure: true
+presets:
+  otlpExporter:
+    enabled: true
+  loggingExporter:
+    enabled: true
+  logsCollection:
+    enabled: true
+    startAt: beginning      # Options: beginning or end
+    includeFilePath: true   # Adds file path as metadata
+    includeFileName: false
+    # Exclusion configuration
+#   blacklist:
+#      enabled: true
+#     signozLogs: true     # Excludes SigNoz's own logs
+#     namespaces:
+#       - kube-system      # Add namespaces to exclude
+#     pods:
+#       - hotrod          # Add pod names to exclude
+#       - locust
+#     containers: []       # Add container names to exclude
+  # Host metrics config
+  hostMetrics:
+    enabled: true
+    collectionInterval: 30s  # Adjust based on your monitoring needs
+    scrapers:
+      cpu: {}        # Collects CPU usage, time, and utilization metrics
+      load: {}       # Collects system load averages
+      memory: {}     # Collects memory usage metrics
+      disk:          # Collects disk I/O metrics
+        exclude:
+          devices:   # Regex patterns to exclude specific devices
+            - ^ram\d+$
+            - ^loop\d+$
+            # Add custom device exclusions here
+      filesystem:    # Collects filesystem metrics
+        exclude_fs_types:
+          fs_types:
+            - tmpfs
+            - squashfs
+            # Add filesystem types to exclude
+      network:       # Collects network metrics
+        exclude:
+          interfaces:
+            - ^veth.*$    # Excludes virtual ethernet devices
+            - ^docker.*$  # Excludes docker interfaces
+            # Add network interfaces to exclude
+
+  #Kubelete metrics
+  kubeletMetrics:
+    enabled: true
+    collectionInterval: 30s
+    authType: serviceAccount    # Authentication method
+    endpoint: ${env:K8S_HOST_IP}:10250
+    insecureSkipVerify: true   # Set to false in production
+    
+    # Metrics configuration
+    metrics:
+      k8s.pod.cpu_limit_utilization:
+        enabled: true
+      k8s.pod.memory_limit_utilization:
+        enabled: true
+
+  clusterMetrics:
+    enabled: true
+    collectionInterval: 30s
+    
+    # Node conditions to monitor
+    nodeConditionsToReport:
+      - Ready
+      - MemoryPressure
+      - DiskPressure
+      # Add conditions based on monitoring needs
+    # Resource types to monitor
+    allocatableTypesToReport:
+      - cpu
+      - memory
+      - storage    # Uncomment if needed
+
+  resourceDetection:
+    detectors:
+      - eks
+      - system
+  kubernetesAttributes:
+    enabled: true
+    passthrough: false    # Set true to disable k8s API calls
+    
+    # Control which metadata to collect
+    extractMetadatas:
+      - k8s.namespace.name
+      - k8s.deployment.name
+      - k8s.pod.name
+      - k8s.node.name
+      # Add or remove metadata fields
+    
+    # Pod association configuration
+    podAssociation:
+      - sources:
+        - from: resource_attribute
+          name: k8s.pod.ip
+    # This label/annotation extraction rule takes the value of the key from labels/annotations and maps it to the tag_name attribute which will be added to the associated resources
+    extractLabels:
+      # Example from pod
+      - tag_name: service.name
+        key: app.kubernetes.io/name
+        from: pod
+      # Example from node
+      - tag_name: os.type
+        key: beta.kubernetes.io/os
+        from: node
+    
+    # Annotation extraction configuration
+    extractAnnotations:
+      # Example from node
+      - tag_name: node.ttl
+        key: node.alpha.kubernetes.io/ttl
+        from: node
+    k8sEvents:
+      enabled: true
+      authType: serviceAccount
+      namespaces: []
+
+otelDeployment:
+  enabled: true
+
+
+      
