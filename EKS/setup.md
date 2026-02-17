@@ -12,7 +12,14 @@ helm repo update
 ---
 helm install my-release signoz/k8s-infra -f override-values.yaml
 ---
-
+# to upgrade
+---
+helm upgrade my-release signoz/k8s-infra  -f override-values.yaml
+---
+# agent rollout / restart
+---
+kubectl rollout restart daemonset my-release-k8s-infra-otel-agent
+---
 
 
 ### !!! for information 

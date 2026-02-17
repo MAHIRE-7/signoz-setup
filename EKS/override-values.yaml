@@ -4,6 +4,8 @@ global:
   deploymentEnvironment: Production
 otelCollectorEndpoint: 172.31.6.192:4317 # SigNoz private ip
 otelInsecure: true
+kubeStateMetrics:
+  enabled: true
 presets:
   otlpExporter:
     enabled: true
@@ -56,8 +58,12 @@ presets:
     enabled: true
     collectionInterval: 30s
     authType: serviceAccount    # Authentication method
-    endpoint: ${env:K8S_HOST_IP}:10250
+    endpoint: https:${env:K8S_HOST_IP}:10250
     insecureSkipVerify: true   # Set to false in production
+    metricGroups:
+     - volume
+     - node
+     - pod
     
     # Metrics configuration
     metrics:
@@ -65,6 +71,7 @@ presets:
         enabled: true
       k8s.pod.memory_limit_utilization:
         enabled: true
+  
 
   clusterMetrics:
     enabled: true
