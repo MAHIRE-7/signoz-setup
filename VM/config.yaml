@@ -39,6 +39,14 @@ receivers:
         from: attributes.message
         to: body
 processors:
+  resource/host_identity:
+    attributes:
+      - key: host.name
+        value: vm-prod-01   # CHANGE per machine
+        action: upsert
+      - key: deployment.environment
+        value: production # CHANGE per environment
+        action: upsert
   batch:
     send_batch_size: 1000
     timeout: 10s
