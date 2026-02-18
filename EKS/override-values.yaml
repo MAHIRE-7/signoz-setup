@@ -1,7 +1,11 @@
 global:
   cloud: aks
-  clusterName: keyklock
-  deploymentEnvironment: Production
+  clusterName: keyklock  # change cluster name as per configurations
+  deploymentEnvironment: Production # change cluster name as per configurations
+  resourceAttributes:
+    deployment.environment: Production # change cluster name as per configurations
+    k8s.cluster.name: keyklock # change cluster name as per configurations
+
 otelCollectorEndpoint: 10.16.21.4:4317 # SigNoz private ip
 otelInsecure: true
 kubeStateMetrics:
@@ -29,6 +33,7 @@ presets:
   # Host metrics config
   hostMetrics:
     enabled: true
+    rootPath: /hostfs #for accurate node disk usage
     collectionInterval: 30s  # Adjust based on your monitoring needs
     scrapers:
       cpu: {}        # Collects CPU usage, time, and utilization metrics
@@ -82,6 +87,7 @@ presets:
       - Ready
       - MemoryPressure
       - DiskPressure
+      - PIDPressure
       # Add conditions based on monitoring needs
     # Resource types to monitor
     allocatableTypesToReport:
