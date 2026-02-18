@@ -1,8 +1,8 @@
 global:
-  cloud: aws
+  cloud: aks
   clusterName: keyklock
   deploymentEnvironment: Production
-otelCollectorEndpoint: 172.31.6.192:4317 # SigNoz private ip
+otelCollectorEndpoint: 10.16.21.4:4317 # SigNoz private ip
 otelInsecure: true
 kubeStateMetrics:
   enabled: true
@@ -91,7 +91,7 @@ presets:
 
   resourceDetection:
     detectors:
-      - eks
+      - azure
       - system
   kubernetesAttributes:
     enabled: true

@@ -22,6 +22,34 @@ kubectl rollout restart daemonset my-release-k8s-infra-otel-agent
 ---
 
 
+=============================================================================
+### changes to be done on manifest files
+## add below env in deployments, statefulsets
+---
+env:
+  - name: HOST_IP
+    valueFrom:
+      fieldRef:
+        fieldPath: status.hostIP
+  - name: K8S_POD_IP
+    valueFrom:
+      fieldRef:
+        apiVersion: v1
+        fieldPath: status.podIP
+  - name: K8S_POD_UID
+    valueFrom:
+      fieldRef:
+        fieldPath: metadata.uid
+  - name: OTEL_EXPORTER_OTLP_INSECURE
+    value: "true"
+  - name: OTEL_EXPORTER_OTLP_ENDPOINT
+    value: <Monitoring-vm-ip>:4317
+  - name: OTEL_RESOURCE_ATTRIBUTES
+    value: service.name=APPLICATION_NAME,k8s.pod.ip=$(K8S_POD_IP),k8s.pod.uid=$(K8S_POD_UID)
+
+---
+
+
 ### !!! for information 
 Resource Requirements
 Recommended resource allocations based on preset combinations:

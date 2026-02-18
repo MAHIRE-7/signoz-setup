@@ -29,6 +29,15 @@ receivers:
           static_configs:
             - targets:
               # - localhost:8888 # Uncomment to scrape Collector's own metrics
+  syslog:
+    tcp:
+      listen_address: '0.0.0.0:54527'
+    protocol: rfc3164
+    location: UTC
+    operators:
+      - type: move
+        from: attributes.message
+        to: body
 processors:
   batch:
     send_batch_size: 1000
@@ -45,7 +54,7 @@ extensions:
   zpages: {}
 exporters:
   otlp:
-    endpoint: http://172.31.6.192:4317
+    endpoint: http://10.16.21.4:4317
     tls:
       insecure: true
   
@@ -70,6 +79,6 @@ service:
       processors: [batch]
       exporters: [otlp]
     logs:
-      receivers: [otlp]
+      receivers: [otlp, syslog]
       processors: [batch]
-      exporters: [otlp]
+      exporters: [otlp, clickhouselogsexporter]
