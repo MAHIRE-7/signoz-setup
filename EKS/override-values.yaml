@@ -1,10 +1,10 @@
 global:
   cloud: aks
-  clusterName: AKS-DEV # change cluster name as per configurations
-  deploymentEnvironment: Development # change cluster name as per configurations
+  clusterName: idms-poc # change cluster name as per configurations
+  deploymentEnvironment: poc # change cluster name as per configurations
   resourceAttributes:
-    deployment.environment: Development # change cluster name as per configurations
-    k8s.cluster.name: AKS-DEV # change cluster name as per configurations
+    deployment.environment: poc # change cluster name as per configurations
+    k8s.cluster.name: idms-poc # change cluster name as per configurations
 
 otelCollectorEndpoint: 10.16.21.4:4317 # SigNoz private ip
 otelInsecure: true
@@ -45,11 +45,20 @@ presets:
             - ^ram\d+$
             - ^loop\d+$
             # Add custom device exclusions here
-      filesystem:    # Collects filesystem metrics
+      filesystem:
+        exclude_mount_points:
+          match_type: regexp
+          mount_points:
+            - ^/boot/efi$
+            - ^/run/containerd/.*
+            - ^/var/lib/kubelet/pods/.*    # Collects filesystem metrics
         exclude_fs_types:
           fs_types:
             - tmpfs
             - squashfs
+            - devtmpfs
+            - overlay
+            - vfat
             # Add filesystem types to exclude
       network:       # Collects network metrics
         exclude:
@@ -63,25 +72,25 @@ presets:
     enabled: true
     collectionInterval: 30s
     authType: serviceAccount    # Authentication method
-    endpoint: https:${env:K8S_HOST_IP}:10250
+    endpoint: ${env:K8S_HOST_IP}:10250
     insecureSkipVerify: true   # Set to false in production
     metricGroups:
      - volume
      - node
      - pod
-    
+
     # Metrics configuration
     metrics:
       k8s.pod.cpu_limit_utilization:
         enabled: true
       k8s.pod.memory_limit_utilization:
         enabled: true
-  
+
 
   clusterMetrics:
     enabled: true
     collectionInterval: 30s
-    
+
     # Node conditions to monitor
     nodeConditionsToReport:
       - Ready
@@ -102,7 +111,7 @@ presets:
   kubernetesAttributes:
     enabled: true
     passthrough: false    # Set true to disable k8s API calls
-    
+
     # Control which metadata to collect
     extractMetadatas:
       - k8s.namespace.name
@@ -110,7 +119,7 @@ presets:
       - k8s.pod.name
       - k8s.node.name
       # Add or remove metadata fields
-    
+
     # Pod association configuration
     podAssociation:
       - sources:
@@ -126,7 +135,7 @@ presets:
       - tag_name: os.type
         key: beta.kubernetes.io/os
         from: node
-    
+
     # Annotation extraction configuration
     extractAnnotations:
       # Example from node
@@ -142,4 +151,5 @@ otelDeployment:
   enabled: true
 
 
-      
+
+ 
