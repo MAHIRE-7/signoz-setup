@@ -10,15 +10,16 @@ helm repo update
 
 # To install the k8s-infra chart with the above configuration, run the following command:
 ---
-helm install my-release signoz/k8s-infra -f override-values.yaml
+kubectl create namespace dev-signoz
+helm install my-release signoz/k8s-infra -f override-values.yaml -n dev-signoz
 ---
 # to upgrade
 ---
-helm upgrade my-release signoz/k8s-infra  -f override-values.yaml
+helm upgrade my-release signoz/k8s-infra  -f override-values.yaml -n dev-signoz
 ---
 # agent rollout / restart
 ---
-kubectl rollout restart daemonset my-release-k8s-infra-otel-agent
+kubectl rollout restart daemonset my-release-k8s-infra-otel-agent -n dev-signoz 
 ---
 
 
