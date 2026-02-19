@@ -1,10 +1,10 @@
 global:
   cloud: aks
-  clusterName: idms-poc # change cluster name as per configurations
-  deploymentEnvironment: poc # change cluster name as per configurations
+  clusterName: AKS-DEV # change cluster name as per configurations
+  deploymentEnvironment: DEV # change cluster name as per configurations
   resourceAttributes:
-    deployment.environment: poc # change cluster name as per configurations
-    k8s.cluster.name: idms-poc # change cluster name as per configurations
+    deployment.environment: DEV # change cluster name as per configurations
+    k8s.cluster.name: AKS-DEV # change cluster name as per configurations
 
 otelCollectorEndpoint: 10.16.21.4:4317 # SigNoz private ip
 otelInsecure: true
@@ -21,11 +21,11 @@ presets:
     includeFilePath: true   # Adds file path as metadata
     includeFileName: false
     # Exclusion configuration
-#   blacklist:
-#      enabled: true
-#     signozLogs: true     # Excludes SigNoz's own logs
-#     namespaces:
-#       - kube-system      # Add namespaces to exclude
+    blacklist:
+      enabled: true
+      signozLogs: true     # Excludes SigNoz's own logs
+      namespaces:
+       - kube-system      # Add namespaces to exclude
 #     pods:
 #       - hotrod          # Add pod names to exclude
 #       - locust
