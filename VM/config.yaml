@@ -5,6 +5,7 @@ receivers:
         endpoint: 0.0.0.0:4317
       http:
         endpoint: 0.0.0.0:4318
+  # Host metrics
   hostmetrics:
     collection_interval: 60s
     scrapers:
@@ -20,6 +21,7 @@ receivers:
         mute_process_exe_error: true
         mute_process_io_error: true
       processes: {}
+  # prometheus exporter
   prometheus:
     config:
       global:
@@ -28,7 +30,8 @@ receivers:
         - job_name: otel-collector-binary
           static_configs:
             - targets:
-              # - localhost:8888 # Uncomment to scrape Collector's own metrics
+           # - localhost:8888 # Uncomment to scrape Collector's own metrics
+  # SysLogs
   syslog:
     tcp:
       listen_address: '0.0.0.0:54527'
@@ -38,6 +41,10 @@ receivers:
       - type: move
         from: attributes.message
         to: body
+  # Journald Logs
+  journald:
+    directory: /var/log/journal
+    start_at: end
 processors:
   resource/host_identity:
     attributes:
@@ -87,6 +94,6 @@ service:
       processors: [batch]
       exporters: [otlp]
     logs:
-      receivers: [otlp, syslog]
+      receivers: [otlp, syslog, journald]
       processors: [batch]
       exporters: [otlp, clickhouselogsexporter]
