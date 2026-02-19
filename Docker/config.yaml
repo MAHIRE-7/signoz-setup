@@ -59,7 +59,7 @@ processors:
 
 exporters:
   otlp:
-    endpoint: "http://172.31.6.192:4317"
+    endpoint: "http://<Monitoring-vm-ip>:4317"
     tls:
       insecure: true
   debug:
@@ -82,6 +82,6 @@ service:
       processors: [resourcedetection/docker]
       exporters: [otlp]
     logs:
-      receivers: [otlp]
+      receivers: [otlp, filelog]
       processors: [batch]
       exporters: [otlp]
