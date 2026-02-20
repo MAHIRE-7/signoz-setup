@@ -23,7 +23,7 @@ sudo mkdir otelcol-contrib && tar xvzf otelcol-contrib_0.143.1_linux_amd64.tar.g
 # OR
 # run in background
 ---
-./otelcol-contrib --config ./config.yaml &> otelcol-output.log & echo "$!" > otel-pid
+sudo bash -c './otelcol-contrib --config ./config.yaml &> otelcol-output.log & echo "$!" > otel-pid'
 
 ---
 =======================================================================================================================================
