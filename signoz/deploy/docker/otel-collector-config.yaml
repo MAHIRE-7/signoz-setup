@@ -9,9 +9,9 @@ receivers:
   otlp:
     protocols:
       grpc:
-        endpoint: 0.0.0.0:4317
+        endpoint: 0.0.0.0:1972
       http:
-        endpoint: 0.0.0.0:4318
+        endpoint: 0.0.0.0:1973
   prometheus:
     config:
       global:
