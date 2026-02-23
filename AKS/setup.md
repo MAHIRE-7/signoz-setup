@@ -14,16 +14,31 @@ kubectl create namespace dev-signoz
 helm install my-release signoz/k8s-infra -f override-values.yaml 
 ---
 
-# Upgrade ports
+# Upgrade ports to custom 1972/1973
 ---
-helm upgrade dev-signoz signoz/k8s-infra \
-  --set otlp.containerPort=1972 \
-  --set otlp.servicePort=1972 \
-  --set otlp.hostPort=1972 \
-  --set otlp-http.containerPort=1973 \
-  --set otlp-http.servicePort=1973 \
-  --set otlp-http.hostPort=1973 
- 
+helm upgrade dev-signoz signoz/k8s-infra -f override-values.yaml \
+  --set otelCollectorAgent.service.ports.otlp-grpc.containerPort=1972 \
+  --set otelCollectorAgent.service.ports.otlp-grpc.servicePort=1972 \
+  --set otelCollectorAgent.service.ports.otlp-http.containerPort=1973 \
+  --set otelCollectorAgent.service.ports.otlp-http.servicePort=1973 \
+  --reuse-values
+
+
+  #  
+
+  helm upgrade my-release signoz/k8s-infra \
+  --set otelAgent.ports.otlp.containerPort=4317 \
+  --set otelAgent.ports.otlp.servicePort=1972 \
+  --set otelAgent.ports.otlp.hostPort=1972 \
+  --set otelAgent.ports.otlp-http.containerPort=4318 \
+  --set otelAgent.ports.otlp-http.servicePort=1973 \
+  --set otelAgent.ports.otlp-http.hostPort=1973 \
+  --reset-values
+  # 
+  helm upgrade my-release signoz/k8s-infra \
+  -f override-values.yaml \
+  --reset-values
+
 ---
 # to upgrade
 ---
@@ -63,7 +78,7 @@ env:
   - name: OTEL_EXPORTER_OTLP_INSECURE
     value: "true"
   - name: OTEL_EXPORTER_OTLP_ENDPOINT
-    value: <Monitoring-vm-ip>:4317
+    value: <Monitoring-vm-ip>:1972
   - name: OTEL_RESOURCE_ATTRIBUTES
     value: service.name=APPLICATION_NAME,k8s.pod.ip=$(K8S_POD_IP),k8s.pod.uid=$(K8S_POD_UID)
 
@@ -78,3 +93,7 @@ Configuration	CPU Request	Memory Request	CPU Limit	Memory Limit
 Minimal	            100m	256Mi	            200m	512Mi
 Standard	        200m	512Mi	            500m	1Gi
 Full	            500m	1Gi	                1000m	2Gi
+
+## code
+4317 = 1972
+4318 = 1973

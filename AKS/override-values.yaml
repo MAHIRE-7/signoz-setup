@@ -6,8 +6,20 @@ global:
     deployment.environment: DEV # change cluster name as per configurations
     k8s.cluster.name: AKS-DEV # change cluster name as per configurations
 
-otelCollectorEndpoint: 10.16.21.4:1972 # SigNoz private ip
+otelCollectorEndpoint: 172.31.1.247:1972 # SigNoz private ip
 otelInsecure: true
+insecureSkipVerify: true
+
+otelAgent:
+  additionalEnvs:
+    OTEL_EXPORTER_OTLP_ENDPOINT:
+      value: "172.31.1.247:1972"
+
+otelDeployment:
+  additionalEnvs:
+    OTEL_EXPORTER_OTLP_ENDPOINT:
+      value: "172.31.1.247:1972"
+
 kubeStateMetrics:
   enabled: true
 presets:
