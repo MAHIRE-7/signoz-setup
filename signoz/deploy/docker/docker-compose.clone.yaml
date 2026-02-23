@@ -158,8 +158,8 @@ services:
       - LOW_CARDINAL_EXCEPTION_GROUPING=false
     ports:
       # - "1777:1777"     # pprof extension
-      - "1972:1972" # OTLP gRPC receiver
-      - "1973:1973" # OTLP HTTP receiver
+      - "4317:4317" # OTLP gRPC receiver
+      - "4318:4318" # OTLP HTTP receiver
       - '54527:54527' # for syslogs setup
     depends_on:
       signoz:

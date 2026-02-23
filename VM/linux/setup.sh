@@ -15,3 +15,6 @@ echo "Runnig otel contrib in Background"
 echo "================================================================"
 echo "Installation completed for  Signoz VM agent"
 echo "================================================================"
+
+#Reg-X is a RegTech (Regulatory Technology) SaaS company that provides software and consulting to help banks,
+# asset managers, and financial firms automate regulatory reporting and compliance# 
