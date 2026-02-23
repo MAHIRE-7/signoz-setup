@@ -13,10 +13,22 @@ helm repo update
 kubectl create namespace dev-signoz
 helm install my-release signoz/k8s-infra -f override-values.yaml 
 ---
+
+# Upgrade ports
+---
+helm upgrade dev-signoz signoz/k8s-infra \
+  --set otlp.containerPort=1972 \
+  --set otlp.servicePort=1972 \
+  --set otlp.hostPort=1972 \
+  --set otlp-http.containerPort=1973 \
+  --set otlp-http.servicePort=1973 \
+  --set otlp-http.hostPort=1973 
+ 
+---
 # to upgrade
 ---
 helm upgrade my-release signoz/k8s-infra  -f override-values.yaml --reuse-values
-
+ 
 kubectl delete pod -l app.kubernetes.io/name=otel-collector-agent
 ---
 ## Step 3 — Verify ConfigMap Actually Updated

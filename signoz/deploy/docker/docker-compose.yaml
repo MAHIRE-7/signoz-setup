@@ -111,12 +111,12 @@ services:
       # - ../common/clickhouse/storage.xml:/etc/clickhouse-server/config.d/storage.xml
   signoz:
     !!merge <<: *db-depend
-    image: signoz/signoz:${VERSION:-v0.111.0}
+    image: signoz/signoz:${VERSION:-v0.112.0}
     container_name: signoz
     command:
       - --config=/root/config/prometheus.yml
-    # ports:
-    #   - "443:8080" # signoz port - now handled by nginx
+    ports:
+      - "8080:8080" # signoz port
     #   - "6060:6060"     # pprof port
     volumes:
       - ../common/signoz/prometheus.yml:/root/config/prometheus.yml
@@ -158,9 +158,8 @@ services:
       - LOW_CARDINAL_EXCEPTION_GROUPING=false
     ports:
       # - "1777:1777"     # pprof extension
-      - "1972:1972" # OTLP gRPC receiver
-      - "1973:1973" # OTLP HTTP receiver
-      - '54527:54527' # for syslogs setup
+      - "4317:4317" # OTLP gRPC receiver
+      - "4318:4318" # OTLP HTTP receiver
     depends_on:
       signoz:
         condition: service_healthy
@@ -185,19 +184,6 @@ services:
       - --dsn=tcp://clickhouse:9000
       - --up=
     restart: on-failure
-  nginx:
-    !!merge <<: *common
-    image: nginx:alpine
-    container_name: signoz-nginx
-    ports:
-      - "443:443"
-      - "80:80"
-    volumes:
-      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
-      - ./nginx/certs:/etc/nginx/certs:ro
-    depends_on:
-      signoz:
-        condition: service_healthy
 networks:
   signoz-net:
     name: signoz-net

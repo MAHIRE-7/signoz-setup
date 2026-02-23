@@ -6,7 +6,7 @@ global:
     deployment.environment: DEV # change cluster name as per configurations
     k8s.cluster.name: AKS-DEV # change cluster name as per configurations
 
-otelCollectorEndpoint: 10.16.21.4:4317 # SigNoz private ip
+otelCollectorEndpoint: 10.16.21.4:1972 # SigNoz private ip
 otelInsecure: true
 kubeStateMetrics:
   enabled: true
