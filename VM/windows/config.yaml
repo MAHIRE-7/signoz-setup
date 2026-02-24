@@ -2,9 +2,9 @@ receivers:
   otlp:
     protocols:
       grpc:
-        endpoint: 0.0.0.0:4317
+        endpoint: 0.0.0.0:1972
       http:
-        endpoint: 0.0.0.0:4318
+        endpoint: 0.0.0.0:1973
   # Host metrics
   hostmetrics:
     collection_interval: 60s
@@ -22,16 +22,13 @@ receivers:
         mute_process_io_error: true
         mute_process_user_error: true
       processes: {}
-  # prometheus exporter
-  prometheus:
-    config:
-      global:
-        scrape_interval: 60s
-      scrape_configs:
-        - job_name: otel-collector-binary
-          static_configs:
-            - targets:
-           # - localhost:8888 # Uncomment to scrape Collector's own metrics
+ # Windows Event Logs
+  windowseventlog/application:
+        channel: application
+  windowseventlog/system:
+        channel: system
+  windowseventlog/security:
+        channel: security
   # SysLogs
   syslog:
     tcp:
@@ -42,21 +39,12 @@ receivers:
       - type: move
         from: attributes.message
         to: body
-  # Journald Logs
-  journald:
-    directory: /var/log/journal
-    start_at: end
-  # Windows Event Logs
-  windowseventlog/application:
-        channel: application
-  windowseventlog/system:
-        channel: system
-
+  
 processors:
   resource/host_identity:
     attributes:
       - key: host.name
-        value: vm-prod-01   # CHANGE per machine
+        value: AZCIN-DEV-MACHINE   # CHANGE per machine
         action: upsert
       - key: deployment.environment
         value: production # CHANGE per environment
@@ -66,7 +54,7 @@ processors:
     timeout: 10s
   # Ref: https://github.com/open-telemetry/opentelemetry-collector-contrib/blob/main/processor/resourcedetectionprocessor/README.md
   resourcedetection:
-    detectors: [env, system] # Before system detector, include ec2 for AWS, gcp for GCP and azure for Azure.
+    detectors: [env] # Before system detector, include ec2 for AWS, gcp for GCP and azure for Azure.
     # Using OTEL_RESOURCE_ATTRIBUTES envvar, env detector adds custom labels.
     timeout: 2s
     system:
@@ -76,7 +64,7 @@ extensions:
   zpages: {}
 exporters:
   otlp:
-    endpoint: http://10.16.21.4:4317
+    endpoint: 172.31.0.155:1972
     tls:
       insecure: true
   
@@ -89,18 +77,14 @@ service:
   extensions: [health_check, zpages]
   pipelines:
     metrics:
-      receivers: [otlp]
-      processors: [batch]
-      exporters: [otlp]
-    metrics/internal:
-      receivers: [prometheus, hostmetrics]
-      processors: [resourcedetection, batch]
+      receivers: [hostmetrics]
+      processors: [resourcedetection, resource/host_identity, batch]
       exporters: [otlp]
     traces:
       receivers: [otlp]
-      processors: [batch]
-      exporters: [otlp]
+      processors: [resourcedetection, resource/host_identity, batch]
+      exporters: [otlp] 
     logs:
-      receivers: [otlp, syslog, journald, windowseventlog/application, windowseventlog/system]
-      processors: [batch]
-      exporters: [otlp, clickhouselogsexporter]
+      receivers: [windowseventlog/application, windowseventlog/system, windowseventlog/security, otlp]
+      processors: [resourcedetection, resource/host_identity, batch]
+      exporters: [otlp]

@@ -51,10 +51,10 @@ processors:
   resource/host_identity:
     attributes:
       - key: host.name
-        value: EKS_AGENT-vm-linux   # CHANGE per machine
+        value: AKS-   # CHANGE per machine
         action: upsert
       - key: deployment.environment
-        value: production # CHANGE per environment
+        value: DEV-VM # CHANGE per environment
         action: upsert
   batch:
     send_batch_size: 1000
