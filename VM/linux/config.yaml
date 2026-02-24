@@ -51,7 +51,7 @@ processors:
   resource/host_identity:
     attributes:
       - key: host.name
-        value: vm-prod-01   # CHANGE per machine
+        value: EKS_AGENT-vm-linux   # CHANGE per machine
         action: upsert
       - key: deployment.environment
         value: production # CHANGE per environment
@@ -61,7 +61,7 @@ processors:
     timeout: 10s
   # Ref: https://github.com/open-telemetry/opentelemetry-collector-contrib/blob/main/processor/resourcedetectionprocessor/README.md
   resourcedetection:
-    detectors: [env, system, azure] # Before system detector, include ec2 for AWS, gcp for GCP and azure for Azure.
+    detectors: [env] # Before system detector, include ec2 for AWS, gcp for GCP and azure for Azure.
     # Using OTEL_RESOURCE_ATTRIBUTES envvar, env detector adds custom labels.
     timeout: 2s
     system:
@@ -69,7 +69,7 @@ processors:
 
 exporters:
   otlp:
-    endpoint: 10.16.21.4:1972
+    endpoint: 172.31.0.155:1972
     tls:
       insecure: true
 
@@ -90,10 +90,7 @@ service:
       receivers: [hostmetrics]
       processors: [resourcedetection, resource/host_identity, batch]
       exporters: [otlp]
-    metrics/internal:
-      receivers: [ hostmetrics]
-      processors: [resourcedetection, batch]
-      exporters: [otlp]
+   
     traces:
       receivers: [otlp]
       processors: [batch]
