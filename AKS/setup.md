@@ -11,7 +11,7 @@ helm repo update
 # To install the k8s-infra chart with the above configuration, run the following command:
 ---
 kubectl create namespace dev-signoz
-helm install my-release signoz/k8s-infra -f override-values.yaml 
+helm install demo signoz/k8s-infra -f override-values.yaml 
 ---
 
 # Upgrade ports to custom 1972/1973
@@ -21,7 +21,7 @@ helm upgrade dev-signoz signoz/k8s-infra -f override-values.yaml \
   --set otelCollectorAgent.service.ports.otlp-grpc.servicePort=1972 \
   --set otelCollectorAgent.service.ports.otlp-http.containerPort=1973 \
   --set otelCollectorAgent.service.ports.otlp-http.servicePort=1973 \
-  --reuse-values
+  --reset-values
 
 
   #  
