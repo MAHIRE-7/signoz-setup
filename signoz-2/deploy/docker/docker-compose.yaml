@@ -148,11 +148,9 @@ services:
     container_name: signoz-otel-collector
     command:
       - --config=/etc/otel-collector-config.yaml
-      - --manager-config=/etc/manager-config.yaml
-      - --copy-path=/var/tmp/collector-config.yaml
+      
     volumes:
       - ./otel-collector-config.yaml:/etc/otel-collector-config.yaml
-      - ../common/signoz/otel-collector-opamp-config.yaml:/etc/manager-config.yaml
       - /:/hostfs:ro
     environment:
       - OTEL_RESOURCE_ATTRIBUTES=host.name=signoz-host,os.type=linux
