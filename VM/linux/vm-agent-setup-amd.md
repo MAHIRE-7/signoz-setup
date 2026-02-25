@@ -8,7 +8,7 @@ sudo wget https://github.com/open-telemetry/opentelemetry-collector-releases/rel
 
 # Extract otel-collector tar.gz to the otelcol-contrib folder
 ---
-sudo mkdir otelcol-contrib && tar xvzf otelcol-contrib_0.143.1_linux_amd64.tar.gz -C otelcol-contrib
+sudo mkdir otelcol-contrib && sudo tar xvzf otelcol-contrib_0.143.1_linux_amd64.tar.gz -C otelcol-contrib
 
 ---
 
@@ -17,6 +17,7 @@ sudo mkdir otelcol-contrib && tar xvzf otelcol-contrib_0.143.1_linux_amd64.tar.g
 # Once we are done with the above configurations, we can now run the collector service with the following command:
 # From the otelcol-contrib, run the following command:
 ---
+sudo cp config.yaml otel-contrib
 ./otelcol-contrib --config ./config.yaml
 
 ---
@@ -31,7 +32,7 @@ sudo bash -c './otelcol-contrib --config ./config.yaml &> otelcol-output.log & e
 ---
 sudo vim /etc/rsyslog.conf
 ---
-## Add the following lines:
+## Add the following lines at the end of file:
 ---
 template(
   name="UTCTraditionalForwardFormat"
@@ -62,4 +63,15 @@ tail -f -n 50 otelcol-output.log
 # !!! ou can stop the collector service otelcol when running in backgorund, with the following command:
 ---
 kill "$(< otel-pid)"
+---
+
+
+## to restart the otel agent
+---
+ps aux | grep otelcol
+
+sudo kill <pid>
+
+
+sudo ./otelcol-contrib --config ./config.yaml &
 ---

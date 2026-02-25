@@ -51,17 +51,17 @@ processors:
   resource/host_identity:
     attributes:
       - key: host.name
-        value: vm-prod-01   # CHANGE per machine
+        value: AZCIN-SP-DEV-MS-01   # CHANGE per machine
         action: upsert
       - key: deployment.environment
-        value: production # CHANGE per environment
+        value: DEV-VM # CHANGE per environment
         action: upsert
   batch:
     send_batch_size: 1000
     timeout: 10s
   # Ref: https://github.com/open-telemetry/opentelemetry-collector-contrib/blob/main/processor/resourcedetectionprocessor/README.md
   resourcedetection:
-    detectors: [env, system, azure] # Before system detector, include ec2 for AWS, gcp for GCP and azure for Azure.
+    detectors: [env] # Before system detector, include ec2 for AWS, gcp for GCP and azure for Azure.
     # Using OTEL_RESOURCE_ATTRIBUTES envvar, env detector adds custom labels.
     timeout: 2s
     system:
@@ -90,10 +90,7 @@ service:
       receivers: [hostmetrics]
       processors: [resourcedetection, resource/host_identity, batch]
       exporters: [otlp]
-    metrics/internal:
-      receivers: [ hostmetrics]
-      processors: [resourcedetection, batch]
-      exporters: [otlp]
+   
     traces:
       receivers: [otlp]
       processors: [batch]
