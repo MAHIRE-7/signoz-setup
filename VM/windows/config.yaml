@@ -64,7 +64,7 @@ extensions:
   zpages: {}
 exporters:
   otlp:
-    endpoint: 172.31.0.155:1972
+    endpoint: 10.16.21.4:1972
     tls:
       insecure: true
   

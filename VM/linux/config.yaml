@@ -51,7 +51,7 @@ processors:
   resource/host_identity:
     attributes:
       - key: host.name
-        value: AKS-   # CHANGE per machine
+        value: AZCIN-SP-DEV-MS-01   # CHANGE per machine
         action: upsert
       - key: deployment.environment
         value: DEV-VM # CHANGE per environment
@@ -69,7 +69,7 @@ processors:
 
 exporters:
   otlp:
-    endpoint: 172.31.0.155:1972
+    endpoint: 10.16.21.4:1972
     tls:
       insecure: true
 
