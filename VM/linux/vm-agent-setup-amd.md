@@ -28,7 +28,35 @@ sudo bash -c './otelcol-contrib --config ./config.yaml &> otelcol-output.log & e
 
 ---
 =======================================================================================================================================
+sudo nano /etc/systemd/system/otelcol.service
+
+---
+[Unit]
+Description=OpenTelemetry Collector Contrib
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=/home/ubuntu/otelcol-contrib/otelcol-contrib --config /home/ubuntu/otelcol-contrib/config.yaml
+WorkingDirectory=/home/ubuntu/otelcol-contrib
+Restart=always
+RestartSec=5
+User=ubuntu
+
+[Install]
+WantedBy=multi-user.target
+---
+
+sudo systemctl daemon-reexec
+sudo systemctl daemon-reload
+sudo systemctl enable otelcol
+sudo systemctl start otelcol
+sudo systemctl status otelcol
+
+
+=======================================================================================================================================
 ## for syslog setup
+
 ---
 sudo vim /etc/rsyslog.conf
 ---
